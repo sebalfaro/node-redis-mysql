@@ -1,0 +1,5 @@
+node_modules
+dump
+db_data
+.log
+.env

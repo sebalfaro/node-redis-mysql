@@ -1,0 +1,34 @@
+services:
+  mysql:
+    container_name: database
+    image: mysql:latest
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password --innodb_dedicated_server=true
+    volumes:
+      - ./dump:/docker-entrypoint-initdb.d
+      - ./db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: customDB
+    networks:
+      - node-redis-web
+    ports:
+      - "127.0.0.1:3306:3306"
+  phpmyadmin:
+    container_name: pma
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - mysql
+    ports:
+      - 8081:80
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    links:
+      - mysql
+    networks:
+      - node-redis-web
+networks:
+  node-redis-web:
+    driver: bridge
