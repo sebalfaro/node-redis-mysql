@@ -1,25 +1,30 @@
-const express = require('express')
-const redis = require('redis')
+const express = require("express");
+const axios = require("axios");
+const responseTime = require("response-time");
+const redisClient = require("./db/redisConnection");
 
-const app = express()
-// const client = redis.createClient()
+const app = express();
 
-//Set initial visits
-// client.set('visits', 0);
+// Middlewares
 
-//defining the root endpoint
-// app.get('/', (req, res) => {
-//     client.get('visits', (err, visits) => {
-//         res.send('Number of visits is: ' + visits + 1)
-//         client.set('visits', parseInt(visits) + 1)
-//     })
-// })
+app.use(responseTime());
 
-//specifying the listening port
-app.listen(3000, ()=>{
-    console.log('Listening on port 3000')
-})
+app.get("/", (req, res) => {
+  res.json({ user: "geek" });
+});
 
-app.get('/', (req, res) => {
-  res.send('Helloaaaa World!')
-})
+app.get("/characters", async (req, res) => {
+  const { data } = await axios.get("https://rickandmortyapi.com/api/character");
+  redisClient.set("characters", JSON.stringify(data), (err, reply) => {
+    if (err) {
+      console.log({err});
+    } else {
+      console.log({reply})
+      res.json({ user: data });
+    }
+  });
+});
+
+app.listen(3000, () => {
+  console.log("Listening on port 3000");
+});

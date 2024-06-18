@@ -2,5 +2,6 @@ node_modules
 dump
 db_data
 redis_db
-.log
+/**/.log
+/**/package-lock.json
 .env
