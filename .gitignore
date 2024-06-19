@@ -1,5 +1,5 @@
 node_modules
-dump
+db-dump
 db_data
 redis_db
 /**/.log
